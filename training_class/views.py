@@ -13,7 +13,7 @@ def authTeacher(request):
     try:
         teacher = Teacher.objects.get(user_id=user.id)
     except ObjectDoesNotExist:
-        return Response('авторизуйтесь как учитель')
+        return Response('авторизуйтесь как учитель', status=401)
 
 
 def authStudent(request):
@@ -21,27 +21,27 @@ def authStudent(request):
     try:
         teacher = Student.objects.get(user_id=user.id)
     except ObjectDoesNotExist:
-        return Response('авторизуйтесь как ученик')
+        return Response('авторизуйтесь как ученик', status=401)
 
 
 def fidelityGroup(group_id):
     try:
         group = Group.objects.get(id=group_id)
     except ObjectDoesNotExist:
-        return Response('неверный запрос группы')
+        return Response('неверный запрос группы', status=400)
 
 
 def fidelityExercise(exercise_id):
     try:
         exercise = Exercise.objects.get(id=exercise_id)
     except ObjectDoesNotExist:
-        return Response('неверный запрос задачи')
+        return Response('неверный запрос задачи', status=400)
 
 def fidelitySolution(solution_id):
     try:
         solution = Exercise.objects.get(id=solution_id)
     except ObjectDoesNotExist:
-        return Response('неверный запрос ответа')
+        return Response('неверный запрос ответа', status=400)
 
 
 class TeacherTrainingClass(APIView):
@@ -78,7 +78,7 @@ class TeacherExercises(APIView):
             serializer = ExerciseSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-            return Response("задача добавлена")
+            return Response("задача добавлена", status=201)
 
 
 class TeacherExercise(APIView):
@@ -97,7 +97,6 @@ class TeacherExercise(APIView):
             serializer = ExerciseSerializer(exercise, many=True, context={'request': request})
             return Response({"exercise": serializer.data})
 
-
     def put(self, request, group_id, exercise_id):
         answerAuth = authTeacher(request)
         if answerAuth!=None:
@@ -108,7 +107,7 @@ class TeacherExercise(APIView):
             serializer = ExerciseSerializer(instance=saved_exercise, data=data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-            return Response("задача обновлена")
+            return Response("задача обновлена", status=200)
 
     def delete(self, request, group_id, exercise_id):
         answerAuth = authTeacher(request)
@@ -117,7 +116,7 @@ class TeacherExercise(APIView):
         else:
             article = get_object_or_404(Exercise.objects.all(), id=exercise_id)
             article.delete()
-            return Response("задача удалена")
+            return Response("задача удалена", status=200)
 
 
 class TeacherSolutions(APIView):
@@ -168,7 +167,7 @@ class TeacherSolution(APIView):
             serializer = SolutionSerializer(instance=saved_solution, data=data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-            return Response("ответ обновлен")
+            return Response("ответ обновлен", status=200)
 
 
 class StudentTrainingClass(APIView):
@@ -243,9 +242,9 @@ class StudentSolutions(APIView):
                 serializer = SolutionSerializer(data=solution)
                 if serializer.is_valid(raise_exception=True):
                     serializer.save()
-                return Response("ответ добавлен")
+                return Response("ответ добавлен", status=201)
             else:
-                return Response("новый ответ создать нельзя, можно изменит существующий")
+                return Response("новый ответ создать нельзя, можно изменит существующий", status=422)
 
 
 class StudentSolution(APIView):
@@ -279,4 +278,4 @@ class StudentSolution(APIView):
             serializer = SolutionSerializer(instance=saved_solution, data=data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-            return Response("ответ обновлен")
+            return Response("ответ обновлен", status=200)

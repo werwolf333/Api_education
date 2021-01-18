@@ -21,11 +21,13 @@ class TeacherTrainingClassTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [{"id": 1, "groupName": "Group"}])
 
     def testGetUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -61,7 +63,7 @@ class TeacherExercisesTest(APITestCase):
         }
         self.client.force_login(user2)
         response = self.client.post(self.url, request_data, format='json')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data, "задача добавлена")
 
     def testGetGroupTrue(self):
@@ -69,17 +71,19 @@ class TeacherExercisesTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
     def testPostUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -130,7 +134,7 @@ class TeacherExerciseTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetExerciseTrue(self):
@@ -138,22 +142,25 @@ class TeacherExerciseTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос задачи")
 
     def testGetUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
     def testPutUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.put(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
     def testDeleteUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -182,6 +189,7 @@ class TeacherSolutionsTest(APITestCase):
         }]}
         self.client.force_login(user2)
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, request_data)
 
     def testGetGroupTrue(self):
@@ -189,7 +197,7 @@ class TeacherSolutionsTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetExerciseTrue(self):
@@ -197,12 +205,13 @@ class TeacherSolutionsTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос задачи")
 
     def testGetUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -231,6 +240,7 @@ class TeacherSolutionTest(APITestCase):
         }]}
         self.client.force_login(user2)
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, request_data)
 
     def testPutStudentSolution(self):
@@ -251,7 +261,7 @@ class TeacherSolutionTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetExerciseTrue(self):
@@ -259,17 +269,19 @@ class TeacherSolutionTest(APITestCase):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос задачи")
 
     def testGetUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
     def testPutUnauthorizedTeacherExercises(self):
         expected_response_data = 'авторизуйтесь как учитель'
         response = self.client.put(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 #--------------------------------------------------------------
@@ -289,11 +301,13 @@ class StudentTrainingClassTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [{"id": 1, "groupName": "Group"}])
 
     def testGetUnauthorizedStudentExercises(self):
         expected_response_data = 'авторизуйтесь как ученик'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -315,6 +329,7 @@ class StudentExercisesTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, {"exercise": [{
             "text": "2+2=?",
             "group_id": 1,
@@ -326,12 +341,13 @@ class StudentExercisesTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetUnauthorizedStudentExercises(self):
         expected_response_data = 'авторизуйтесь как ученик'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -366,7 +382,7 @@ class StudentExerciseTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetExerciseTrue(self):
@@ -374,12 +390,13 @@ class StudentExerciseTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос задачи")
 
     def testGetUnauthorizedStudentExercises(self):
         expected_response_data = 'авторизуйтесь как ученик'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -407,6 +424,7 @@ class StudentSolutionsTest(APITestCase):
         }]}
         self.client.force_login(user1)
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, request_data)
 
     def testAddStudentSolutions(self):
@@ -419,6 +437,7 @@ class StudentSolutionsTest(APITestCase):
         }}
         self.client.force_login(user1)
         response = self.client.post(self.url, request_data, format='json')
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data, "ответ добавлен")
 
     def testAddNewStudentSolutions(self):
@@ -432,6 +451,7 @@ class StudentSolutionsTest(APITestCase):
         }}
         self.client.force_login(user1)
         response = self.client.post(self.url, request_data, format='json')
+        self.assertEqual(response.status_code, 422)
         self.assertEqual(response.data, "новый ответ создать нельзя, можно изменит существующий")
 
     def testGetGroupTrue(self):
@@ -439,7 +459,7 @@ class StudentSolutionsTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetExerciseTrue(self):
@@ -447,17 +467,19 @@ class StudentSolutionsTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос задачи")
 
     def testGetUnauthorizedStudentExercises(self):
         expected_response_data = 'авторизуйтесь как ученик'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
     def testPostUnauthorizedStudentExercises(self):
         expected_response_data = 'авторизуйтесь как ученик'
         response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
 
@@ -485,6 +507,7 @@ class StudentSolutionTest(APITestCase):
         }]}
         self.client.force_login(user1)
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, request_data)
 
     def testPutStudentSolution(self):
@@ -505,7 +528,7 @@ class StudentSolutionTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос группы")
 
     def testGetExerciseTrue(self):
@@ -513,15 +536,17 @@ class StudentSolutionTest(APITestCase):
         user1 = User.objects.get(username="user1")
         self.client.force_login(user1)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, "неверный запрос задачи")
 
     def testGetUnauthorizedStudentExercises(self):
         expected_response_data = 'авторизуйтесь как ученик'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
 
     def testPutUnauthorizedStudentExercises(self):
         expected_response_data = 'авторизуйтесь как ученик'
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, expected_response_data)
