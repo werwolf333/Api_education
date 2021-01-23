@@ -3,25 +3,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 
-class Teacher(models.Model):
-    user = models.OneToOneField(User, related_name='teacher', on_delete=models.CASCADE)
-    teacherName = models.CharField(max_length=200, verbose_name="teacherName")
+class Client(models.Model):
+    user = models.OneToOneField(User, related_name='client', on_delete=models.CASCADE)
+    clientName = models.CharField(max_length=200, verbose_name="clientNameName")
+    status = models.CharField(max_length=200, verbose_name="status")
 
     def __str__(self):
-        return self.teacherName
-
-
-class Student(models.Model):
-    user = models.OneToOneField(User, related_name='student', on_delete=models.CASCADE)
-    studentName = models.CharField(max_length=200, verbose_name="studentName")
-
-    def __str__(self):
-        return self.studentName
+        return self.clientName
 
 
 class Group(models.Model):
-    student = models.ManyToManyField(Student, blank=True)
-    teacher = models.ManyToManyField(Teacher, blank=True)
+    client = models.ManyToManyField(Client, blank=True)
     groupName = models.CharField(max_length=200, verbose_name="groupName")
 
     def __str__(self):
@@ -30,7 +22,7 @@ class Group(models.Model):
 
 class Exercise(models.Model):
     group = models.ForeignKey(Group, related_name='task', on_delete=models.CASCADE)
-    teacher = models.ForeignKey(Teacher, related_name='task', on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Client, related_name='task', on_delete=models.CASCADE)
     text = models.TextField(verbose_name="текст")
 
     def __str__(self):
@@ -39,7 +31,7 @@ class Exercise(models.Model):
 
 class Solution(models.Model):
     exercise = models.ForeignKey(Exercise, related_name='decision', on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, related_name='decision', on_delete=models.CASCADE)
+    student = models.ForeignKey(Client, related_name='decision', on_delete=models.CASCADE)
     text = models.TextField(verbose_name="текст")
     file = models.FileField(blank=True,  upload_to='uploads/')
 
