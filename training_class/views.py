@@ -2,13 +2,17 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import auth
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from training_class.models import Client, Group, Exercise, Solution
+#from training_class.permissions import IsUser
 from training_class.serializers import UserSerializer, ExerciseSerializer, SolutionSerializer
 
 
 class BaseView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def auth_client(self, request):
         try:
             user = auth.get_user(request)

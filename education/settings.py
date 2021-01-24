@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'training_class',
 ]
 
+REST_FRAMEWORK = {
+    "EXCEPTION_HANDLER": ("training_class.error_handler.custom_exception_handler")
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
