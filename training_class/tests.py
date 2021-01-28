@@ -1,10 +1,6 @@
-from rest_framework.test import APIRequestFactory
 from django.test import Client
-from training_class import views
 from training_class.models import User, Client, Group, Exercise, Solution
 from rest_framework.test import APITestCase
-from rest_framework import status
-from training_class.serializers import UserSerializer
 
 
 class CreateObjectsTest(APITestCase):
@@ -57,7 +53,7 @@ class CreateObjectsTest(APITestCase):
                 self.client.force_login(user2)
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 400)
-                self.assertEqual(response.data, "неверный запрос группы")
+                self.assertEqual(response.data, {"message": "неверный запрос группы"})
 
     def testGetExerciseTrue(self):
         if self.url != None:
@@ -67,7 +63,7 @@ class CreateObjectsTest(APITestCase):
                 self.client.force_login(user2)
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 400)
-                self.assertEqual(response.data, "неверный запрос задачи")
+                self.assertEqual(response.data,  {"message": "неверный запрос задачи"})
 
     def testGetSolutionTrue(self):
         if self.url != None:
@@ -77,27 +73,18 @@ class CreateObjectsTest(APITestCase):
                 self.client.force_login(user2)
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, 400)
-                self.assertEqual(response.data, "неверный запрос ответа")
+                self.assertEqual(response.data, {"message": "неверный запрос ответа"})
 
     def testUnauthorized(self):
-        expected_response_data = 'авторизуйтесь'
+        expected_response_data = {
+            "detail": "Учетные данные не были предоставлены."
+        }
+        list_method_auth = {'get': self.client.get, 'post': self.client.post, 'put': self.client.put, 'delete': self.client.delete}
         if self.url != None:
-            for method in self.request_method:
-                if 'get' in self.request_method:
-                    response = self.client.get(self.url)
-                    self.assertEqual(response.status_code, 401)
-                    self.assertEqual(response.data, expected_response_data)
-                elif self.request_method == 'post':
-                    response = self.client.post(self.url)
-                    self.assertEqual(response.status_code, 401)
-                    self.assertEqual(response.data, expected_response_data)
-                elif self.request_method == 'put':
-                    response = self.client.put(self.url)
-                    self.assertEqual(response.status_code, 401)
-                    self.assertEqual(response.data, expected_response_data)
-                elif self.request_method == 'delete':
-                    response = self.client.delete(self.url)
-                    self.assertEqual(response.status_code, 401)
+            for key in list_method_auth:
+                if key in self.request_method:
+                    response = list_method_auth[key](self.url)
+                    self.assertEqual(response.status_code, 403)
                     self.assertEqual(response.data, expected_response_data)
 
 
@@ -138,7 +125,7 @@ class ExercisesTest(CreateObjectsTest):
         self.client.force_login(user2)
         response = self.client.post(self.url, response_data, format='json')
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data, "задача добавлена")
+        self.assertEqual(response.data, {"message": "задача добавлена"})
 
     def testGetStudentExercises(self):
         user1 = User.objects.get(username="user1")
@@ -175,14 +162,14 @@ class ExerciseTest(CreateObjectsTest):
         self.client.force_login(user2)
         response = self.client.put(self.url, response_data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, "задача обновлена")
+        self.assertEqual(response.data, {"message": "задача обновлена"})
 
     def testDeleteExercise(self):
         user2 = User.objects.get(username="user2")
         self.client.force_login(user2)
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, "задача удалена")
+        self.assertEqual(response.data, {"message": "задача удалена"})
 
 
 class TeacherSolutionsTest(CreateObjectsTest):
@@ -212,7 +199,7 @@ class TeacherSolutionsTest(CreateObjectsTest):
         self.client.force_login(user1)
         response = self.client.post(self.url, response_data, format='json')
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data, "ответ добавлен")
+        self.assertEqual(response.data,  {"message": "ответ добавлен"})
 
     def testAddNewStudentSolutions(self):
         user1 = User.objects.get(username="user1")
@@ -220,7 +207,7 @@ class TeacherSolutionsTest(CreateObjectsTest):
         self.client.force_login(user1)
         response = self.client.post(self.url, response_data, format='json')
         self.assertEqual(response.status_code, 422)
-        self.assertEqual(response.data, "новый ответ создать нельзя, можно изменит существующий")
+        self.assertEqual(response.data, {"message": "новый ответ создать нельзя, можно изменит существующий"})
 
 
 class TeacherSolutionTest(CreateObjectsTest):
@@ -241,7 +228,7 @@ class TeacherSolutionTest(CreateObjectsTest):
         self.client.force_login(user2)
         response = self.client.put(self.url, response_data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, "ответ обновлен")
+        self.assertEqual(response.data, {"message": "ответ обновлен"})
 
     def testGetStudentSolution(self):
         user1 = User.objects.get(username="user1")
@@ -257,5 +244,5 @@ class TeacherSolutionTest(CreateObjectsTest):
         self.client.force_login(user1)
         response = self.client.put(self.url, response_data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, "ответ обновлен")
+        self.assertEqual(response.data, {"message": "ответ обновлен"})
 

@@ -41,10 +41,6 @@ INSTALLED_APPS = [
     'training_class',
 ]
 
-REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": ("training_class.error_handler.custom_exception_handler")
-}
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -109,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
